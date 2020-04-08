@@ -36,7 +36,7 @@ class ContactDao {
     final Map<String, dynamic> contactMap = Map();
 
     contactMap[_name] = contact.name;
-    contactMap[_accountNumber] = contact.account;
+    contactMap[_accountNumber] = contact.accountNumber;
 
     return contactMap;
   }

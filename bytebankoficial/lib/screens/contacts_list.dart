@@ -1,7 +1,10 @@
+import 'package:bytebankoficial/components/progress.dart';
 import 'package:bytebankoficial/database/DAO/contact_dao.dart';
 import 'package:bytebankoficial/models/contact.dart';
 import 'package:bytebankoficial/screens/contact_form.dart';
 import 'package:flutter/material.dart';
+
+import 'transaction_form.dart';
 
 class ContactsList extends StatelessWidget {
   final ContactDao _contactDao = ContactDao();
@@ -10,7 +13,7 @@ class ContactsList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Contacts'),
+        title: Text('Transfer'),
       ),
       /*Atualiza os contatos, evita erros como carregar referência nula*/
       body: FutureBuilder<List<Contact>>(
@@ -22,16 +25,7 @@ class ContactsList extends StatelessWidget {
               break;
 
             case ConnectionState.waiting:
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    CircularProgressIndicator(),
-                    Text('Loading'),
-                  ],
-                ),
-              );
+              return Progress();
               break;
 
             case ConnectionState.active:
@@ -42,7 +36,13 @@ class ContactsList extends StatelessWidget {
               return ListView.builder(
                 itemBuilder: (context, index) {
                   final Contact contact = contacts[index];
-                  return _ContactItem(contact);
+                  return _ContactItem(contact, onClick: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => TransactionForm(contact),
+                      ),
+                    );
+                  });
                 },
                 itemCount: contacts.length,
               );
@@ -70,12 +70,15 @@ class ContactsList extends StatelessWidget {
 class _ContactItem extends StatelessWidget {
   final Contact contact;
 
-  _ContactItem(this.contact);
+  final Function onClick;
+
+  _ContactItem(this.contact, {@required this.onClick});
 
   @override
   Widget build(BuildContext context) {
     return Card(
       child: ListTile(
+        onTap: () => onClick(),
         title: Text(
           contact.name,
           style: TextStyle(
@@ -83,7 +86,7 @@ class _ContactItem extends StatelessWidget {
           ),
         ),
         subtitle: Text(
-          contact.account.toString(),
+          contact.accountNumber.toString(),
           style: TextStyle(
             fontSize: 16.0,
           ),
