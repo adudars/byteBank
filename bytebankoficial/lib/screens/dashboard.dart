@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
 class Dashboard extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -11,71 +12,83 @@ class Dashboard extends StatelessWidget {
         title: Text('Dashboard'),
         //backgroundColor: Colors.lightGreen,
       ),
-      body: Column(
-        /*ALinhamento na vertical*/
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        /*ALinhamento na vertical*/
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Image.asset('images/bytebank_logo.png'),
-          ),
-          Container(
-            height: 120,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
+      body: LayoutBuilder(
+        builder: (context, constraints) => SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: constraints.maxHeight,
+            ),
+            child: Column(
+              /*ALinhamento na vertical*/
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              /*ALinhamento na vertical*/
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                _FeatureItem(
-                  'Transfer',
-                  Icons.monetization_on,
-                  onClick: () {
-                    _showContactsList(context);
-                  },
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Image.asset('images/bytebank_logo.png'),
                 ),
-                _FeatureItem(
-                  'Transaction Feed',
-                  Icons.description,
-                  onClick: () {
-                    _showTransactionsList(context);
-                  },
+                Container(
+                  height: 120,
+                  child: ListView(
+                    scrollDirection: Axis.horizontal,
+                    children: <Widget>[
+                      FeatureItem(
+                        'Transfer',
+                        Icons.monetization_on,
+                        onClick: () {
+                          _showContactsList(context);
+                        },
+                      ),
+                      FeatureItem(
+                        'Transaction Feed',
+                        Icons.description,
+                        onClick: () {
+                          _showTransactionsList(context);
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
           ),
-        ],
+        ),
+      ),
+    );
+  }
+
+//  @override
+//  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+//    super.debugFillProperties(properties);
+//    properties.add(DiagnosticsProperty<ContactDao>('contactDao', contactDao));
+//  }
+
+  void _showContactsList(BuildContext context) {
+    /*Aplicando rota -> navegacao entre as paginas*/
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => ContactsList(),
+      ),
+    );
+  }
+
+  void _showTransactionsList(BuildContext context) {
+    /*Aplicando rota -> navegacao entre as paginas*/
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => TransactionsList(),
       ),
     );
   }
 }
 
-
-void _showContactsList(BuildContext context) {
-  /*Aplicando rota -> navegacao entre as paginas*/
-  Navigator.of(context).push(
-    MaterialPageRoute(
-      builder: (context) => ContactsList(),
-    ),
-  );
-}
-
-
-void _showTransactionsList(BuildContext context) {
-  /*Aplicando rota -> navegacao entre as paginas*/
-  Navigator.of(context).push(
-    MaterialPageRoute(
-      builder: (context) => TransactionsList(),
-    ),
-  );
-}
-
-
-class _FeatureItem extends StatelessWidget {
+class FeatureItem extends StatelessWidget {
   final String name;
   final IconData icon;
   final Function onClick;
 
-  _FeatureItem(this.name, this.icon, {@required this.onClick});
+  FeatureItem(this.name, this.icon, {@required this.onClick});
 
   @override
   Widget build(BuildContext context) {
